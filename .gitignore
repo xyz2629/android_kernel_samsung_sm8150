@@ -134,3 +134,5 @@ Android.bp
 # output dir
 /out/
 __pycache__/
+
+/scripts/rkp_cfp/*.pyc
