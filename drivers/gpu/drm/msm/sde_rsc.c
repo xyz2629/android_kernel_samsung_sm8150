@@ -33,6 +33,7 @@
 
 #define SDE_RSC_DRV_DBG_NAME		"sde_rsc_drv"
 #define SDE_RSC_WRAPPER_DBG_NAME	"sde_rsc_wrapper"
+#define DISP_CC_DBG_NAME		"disp_cc"
 
 #define SINGLE_TCS_EXECUTION_TIME_V1	1064000
 #define SINGLE_TCS_EXECUTION_TIME_V2	930000
@@ -1375,6 +1376,7 @@ clk_enable_fail:
 }
 EXPORT_SYMBOL(sde_rsc_client_trigger_vote);
 
+#if defined(CONFIG_DEBUG_FS)
 void sde_rsc_debug_dump(u32 mux_sel)
 {
 	struct sde_rsc_priv *rsc;
@@ -1388,7 +1390,6 @@ void sde_rsc_debug_dump(u32 mux_sel)
 		rsc->hw_ops.debug_dump(rsc, mux_sel);
 }
 
-#if defined(CONFIG_DEBUG_FS)
 static int _sde_debugfs_status_show(struct seq_file *s, void *data)
 {
 	struct sde_rsc_priv *rsc;
@@ -1672,6 +1673,9 @@ static void _sde_rsc_init_debugfs(struct sde_rsc_priv *rsc, char *name)
 static void _sde_rsc_init_debugfs(struct sde_rsc_priv *rsc, char *name)
 {
 }
+void sde_rsc_debug_dump(u32 mux_sel)
+{
+}
 #endif /* defined(CONFIG_DEBUG_FS) */
 
 static void sde_rsc_deinit(struct platform_device *pdev,
@@ -1737,6 +1741,8 @@ static int sde_rsc_bind(struct device *dev,
 							rsc->drv_io.len);
 	sde_dbg_reg_register_base(SDE_RSC_WRAPPER_DBG_NAME,
 				rsc->wrapper_io.base, rsc->wrapper_io.len);
+	sde_dbg_reg_register_base(DISP_CC_DBG_NAME,
+				rsc->dispcc_io.base, rsc->dispcc_io.len);
 	return 0;
 }
 
@@ -1854,6 +1860,12 @@ static int sde_rsc_probe(struct platform_device *pdev)
 	ret = msm_dss_ioremap_byname(pdev, &rsc->drv_io, "drv");
 	if (ret) {
 		pr_err("sde rsc: drv io data mapping failed ret:%d\n", ret);
+		goto sde_rsc_fail;
+	}
+
+	ret = msm_dss_ioremap_byname(pdev, &rsc->dispcc_io, "dispcc");
+	if (ret) {
+		pr_err("sde rsc: disp_cc data mapping failed ret%d\n", ret);
 		goto sde_rsc_fail;
 	}
 
