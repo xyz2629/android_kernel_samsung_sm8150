@@ -6005,7 +6005,6 @@ CONFIG_SENSORS_QBT2000=y
 #
 # samsung Performace manager
 #
-CONFIG_KPERFMON=y
 CONFIG_SPU_VERIFY=y
 
 #
