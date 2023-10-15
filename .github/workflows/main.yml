@@ -19,7 +19,7 @@ jobs:
       CCACHE_NOHASHDIR: "true"
       CCACHE_MAXSIZE: "2G"
       CCACHE_HARDLINK: "true"
-      KERNEL_DEFCONFIG: "afaneh_beyond1qlte_defconfig"
+      #KERNEL_DEFCONFIG: "afaneh_beyond1qlte_defconfig"
       KERNEL_CMDLINE: "ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- LLVM=1 LLVM_IAS=1 O=out"
     steps:
     - name: Checkout
@@ -53,7 +53,7 @@ jobs:
        export PATH=$(pwd)/proton-clang-20210123/bin/:$PATH
        export ARCH=arm64
        export SUBARCH=arm64
-       make $KERNEL_CMDLINE $KERNEL_DEFCONFIG CC="ccache clang"
+       make $KERNEL_CMDLINE s10_kernelsu_defconfig CC="ccache clang"
        make $KERNEL_CMDLINE CC="ccache clang" -j$(nproc --all)
        cp out/arch/arm64/boot/Image.gz AnyKernel3
 
@@ -66,10 +66,15 @@ jobs:
     - name: Build LXC-Kernel-SU
       run: |
         #curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
+        mv kernel/cgroup/cgroup.c kernel/cgroup/cgroup0.c
+        mv kernel/cgroup/cgroup1.c kernel/cgroup/cgroup.c
         export PATH=$(pwd)/proton-clang-20210123/bin/:$PATH
-        make $KERNEL_CMDLINE $KERNEL_DEFCONFIG CC="ccache clang"
+        make $KERNEL_CMDLINE s10_kernelsu_lxc_hid_defconfig CC="ccache clang"
         make $KERNEL_CMDLINE CC="ccache clang" -j$(nproc --all)
         cp out/arch/arm64/boot/Image.gz AnyKernel3
+        mv kernel/cgroup/cgroup.c kernel/cgroup/cgroup1.c
+        mv kernel/cgroup/cgroup0.c kernel/cgroup/cgroup.c
+      
 
     - name: Upload Kernel
       uses: actions/upload-artifact@v3
