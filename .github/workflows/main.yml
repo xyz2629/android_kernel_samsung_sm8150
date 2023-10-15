@@ -47,8 +47,9 @@ jobs:
       run: |
         echo "TIME=$(TZ=UTC-8 date +%m%d%H%M )" >> $GITHUB_OUTPUT
 
-    - name: Build Kernel
+    - name: Build Kernel-SU
       run: |
+       curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
        export PATH=$(pwd)/proton-clang-20210123/bin/:$PATH
        export ARCH=arm64
        export SUBARCH=arm64
@@ -56,16 +57,16 @@ jobs:
        make $KERNEL_CMDLINE CC="ccache clang" -j$(nproc --all)
        cp out/arch/arm64/boot/Image.gz AnyKernel3
 
-    - name: Upload Kernel
+    - name: Upload Kernel 
       uses: actions/upload-artifact@v3
       with:
-        name: Qiuqiu-kernel-${{ steps.get_time.outputs.TIME }}
+        name: kernel-kernelsu-${{ steps.get_time.outputs.TIME }}
         path: "AnyKernel3/*"
 
-    - name: Build Kernel-SU
+    - name: Build LXC-Kernel-SU
       run: |
-        curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
-        export PATH=$(pwd)/clang/bin/:$PATH
+        #curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
+        export PATH=$(pwd)/proton-clang-20210123/bin/:$PATH
         make $KERNEL_CMDLINE $KERNEL_DEFCONFIG CC="ccache clang"
         make $KERNEL_CMDLINE CC="ccache clang" -j$(nproc --all)
         cp out/arch/arm64/boot/Image.gz AnyKernel3
