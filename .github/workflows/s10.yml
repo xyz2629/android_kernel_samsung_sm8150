@@ -1,4 +1,4 @@
-name: Build SM-G9730-Kernel
+name: Build S10-Kernel
 on:
   workflow_dispatch:
   schedule:
