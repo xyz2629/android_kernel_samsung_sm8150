@@ -49,7 +49,6 @@ jobs:
 
     - name: Build Kernel-SU
       run: |
-       #curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
        export PATH=$(pwd)/proton-clang-20210123/bin/:$PATH
        export ARCH=arm64
        export SUBARCH=arm64
@@ -71,7 +70,6 @@ jobs:
 
     - name: Build LXC-Kernel-SU
       run: |
-        #curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
         mv kernel/cgroup/cgroup.c kernel/cgroup/cgroup0.c
         mv kernel/cgroup/cgroup1.c kernel/cgroup/cgroup.c
         export PATH=$(pwd)/proton-clang-20210123/bin/:$PATH
