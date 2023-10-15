@@ -33,7 +33,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        sudo apt-get update -y && sudo apt-get upgrade -y
+        sudo apt-get update -y 
         #sudo apt install gcc-aarch64-linux-gnu -y
         #sudo apt install gcc-arm-linux-gnueabi -y
         sudo apt install binutils make python3 libssl-dev build-essential bc  bison flex unzip libssl-dev ca-certificates xz-utils mkbootimg cpio device-tree-compiler git git-lfs -y
