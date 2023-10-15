@@ -37,7 +37,7 @@ jobs:
         sudo apt install gcc-arm-linux-gnueabi -y
         sudo apt install binutils make python3 libssl-dev build-essential bc bison flex unzip libssl-dev ca-certificates xz-utils mkbootimg cpio device-tree-compiler git git-lfs -y
         git clone https://github.com/tomxi1997/android-kernel-tools.git clang-aosp --depth=1
-        git clone https://github.com/lateautumn233/AnyKernel3 -b master --depth=1
+        git clone https://github.com/tomxi1997/AnyKernel3.git --depth=1
         rm -rf AnyKernel3/.git
     
     - name: GetTime
