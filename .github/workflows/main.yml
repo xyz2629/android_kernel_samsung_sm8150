@@ -34,10 +34,15 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update -y 
-        sudo apt install gcc-aarch64-linux-gnu -y
-        sudo apt install gcc-arm-linux-gnueabi -y
         sudo apt install binutils make python3 libssl-dev build-essential bc  bison flex unzip libssl-dev ca-certificates xz-utils mkbootimg cpio device-tree-compiler git git-lfs -y
-        git clone https://github.com/tomxi1997/android-kernel-tools.git clang-aosp --depth=1
+        mkdir ./clang-aosp 
+        wget -O clang.tar.gz https://kali.download/nethunter-images/toolchains/clang-r416183b1.tar.gz
+        tar -C clang-aosp/ -xf clang.tar.gz
+        wget https://kali.download/nethunter-images/toolchains/google_aarch64-4.9.tar.xz
+        wget https://kali.download/nethunter-images/toolchains/google_armhf-4.9.tar.xz
+        tar -xf google_aarch64-4.9.tar.xz
+        tar -xf google_armhf-4.9.tar.xz
+        rm *.xz && rm *.gz
         git clone https://github.com/lateautumn233/AnyKernel3 -b master --depth=1
         rm -rf AnyKernel3/.git
     
@@ -48,7 +53,7 @@ jobs:
 
     - name: Build Kernel-SU
       run: |
-       export PATH=$(pwd)/clang-aosp/clang/host/linux-x86/clang-r428724/bin:$(pwd)/clang-aosp/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin:$(pwd)/clang-aosp/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin:$PATH
+       export PATH=$(pwd)/clang-aosp/bin:$(pwd)/aarch64-4.9/bin:$(pwd)/armhf-4.9/bin:$PATH
        export ARCH=arm64
        export SUBARCH=arm64
        export GKI_ROOT=$(pwd)
@@ -71,7 +76,8 @@ jobs:
       run: |
         mv kernel/cgroup/cgroup.c kernel/cgroup/cgroup0.c
         mv kernel/cgroup/cgroup1.c kernel/cgroup/cgroup.c
-        export PATH=$(pwd)/clang-aosp/clang/host/linux-x86/clang-r428724/bin:$(pwd)/clang-aosp/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin:$(pwd)/clang-aosp/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin:$PATH
+        export ARCH=arm64
+        export PATH=$(pwd)/clang-aosp/bin:$(pwd)/aarch64-4.9/bin:$(pwd)/armhf-4.9/bin:$PATH
         make $KERNEL_CMDLINE s10_kernelsu_lxc_hid_defconfig CC="ccache clang"
         make $KERNEL_CMDLINE CC="ccache clang" -j$(nproc --all)
         cp out/arch/arm64/boot/Image.gz AnyKernel3
