@@ -1,4 +1,4 @@
-name: Build SM-G9730-Kernel
+name: Build SM-G9730-onui-3.1-R-Kernel
 on:
   workflow_dispatch:
   schedule:
@@ -74,15 +74,20 @@ jobs:
 
     - name: Build LXC-Kernel-SU
       run: |
-        mv kernel/cgroup/cgroup.c kernel/cgroup/cgroup0.c
-        mv kernel/cgroup/cgroup1.c kernel/cgroup/cgroup.c
+        git clone -b android-11-lxc https://github.com/tomxi1997/android_kernel_samsung_sm8150.git lxc --depth=1
         export ARCH=arm64
         export PATH=$(pwd)/clang-aosp/bin:$(pwd)/aarch64-4.9/bin:$(pwd)/armhf-4.9/bin:$PATH
+        cd lxc
+        export GKI_ROOT=$(pwd)
+        export DRIVER_DIR="$GKI_ROOT/drivers"
+        export DRIVER_MAKEFILE=$DRIVER_DIR/Makefile
+        git clone -b main https://github.com/tiann/KernelSU.git KernelSU
+        ln -sf "$GKI_ROOT/KernelSU/kernel" "$DRIVER_DIR/kernelsu"
+        sed -i '$a\obj-y += kernelsu/' "$DRIVER_MAKEFILE"
         make $KERNEL_CMDLINE s10_kernelsu_lxc_hid_defconfig CC="ccache clang"
         make $KERNEL_CMDLINE CC="ccache clang" -j$(nproc --all)
         cp out/arch/arm64/boot/Image.gz AnyKernel3
-        mv kernel/cgroup/cgroup.c kernel/cgroup/cgroup1.c
-        mv kernel/cgroup/cgroup0.c kernel/cgroup/cgroup.c
+        
       
 
     - name: Upload Kernel
