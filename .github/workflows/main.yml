@@ -43,7 +43,7 @@ jobs:
         tar -xf google_aarch64-4.9.tar.xz
         tar -xf google_armhf-4.9.tar.xz
         rm *.xz && rm *.gz
-        git clone https://github.com/lateautumn233/AnyKernel3 -b master --depth=1
+        git clone https://github.com/tomxi1997/AnyKernel3.git --depth=1
         rm -rf AnyKernel3/.git
     
     - name: GetTime
