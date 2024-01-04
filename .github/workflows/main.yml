@@ -86,7 +86,9 @@ jobs:
         sed -i '$a\obj-y += kernelsu/' "$DRIVER_MAKEFILE"
         make $KERNEL_CMDLINE s10_kernelsu_lxc_hid_defconfig CC="ccache clang"
         make $KERNEL_CMDLINE CC="ccache clang" -j$(nproc --all)
+        rm -rf ../AnyKernel3/Image.gz
         cp out/arch/arm64/boot/Image.gz AnyKernel3
+        cd ..
         
       
 
